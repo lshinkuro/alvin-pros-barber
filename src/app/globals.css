@@ -1,0 +1,143 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 6 6 10;
+    --foreground: 245 245 247;
+    --muted: 138 138 150;
+    --card: 14 14 18;
+    --border: 255 255 255;
+  }
+
+  * {
+    @apply border-white/10;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-ink-950 text-white antialiased;
+    background-image:
+      radial-gradient(60rem 60rem at 80% -10%, rgba(255, 106, 52, 0.18), transparent 60%),
+      radial-gradient(50rem 50rem at -10% 30%, rgba(120, 90, 255, 0.14), transparent 60%),
+      radial-gradient(40rem 40rem at 50% 110%, rgba(255, 80, 160, 0.1), transparent 60%);
+    background-attachment: fixed;
+  }
+
+  ::selection {
+    @apply bg-accent-500/40 text-white;
+  }
+
+  /* Typography refinements */
+  h1, h2, h3, h4 {
+    @apply font-display tracking-[-0.02em];
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-7xl px-6 sm:px-8 lg:px-10;
+  }
+
+  .glass {
+    @apply border border-white/10 bg-white/[0.04] backdrop-blur-xl;
+    box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.06) inset,
+      0 24px 48px -24px rgba(0, 0, 0, 0.5);
+  }
+
+  .glass-strong {
+    @apply border border-white/10 bg-white/[0.06] backdrop-blur-2xl;
+    box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.08) inset,
+      0 32px 64px -24px rgba(0, 0, 0, 0.6);
+  }
+
+  .gradient-text {
+    background: linear-gradient(110deg, #ffffff 30%, #ff9b6b 60%, #ffffff 90%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .gradient-text-warm {
+    background: linear-gradient(120deg, #ffd5b8, #ff6b34 40%, #ff4a8a 70%, #b39ddb);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-medium tracking-tight transition-all duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-400 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-primary {
+    @apply btn text-white;
+    background: linear-gradient(120deg, #ff6b34, #ff4a8a 60%, #a06bff);
+    box-shadow: 0 10px 30px -10px rgba(255, 75, 120, 0.55),
+      inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  }
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 16px 40px -10px rgba(255, 75, 120, 0.65),
+      inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  }
+
+  .btn-secondary {
+    @apply btn border border-white/15 bg-white/[0.04] text-white backdrop-blur-xl hover:bg-white/[0.08];
+  }
+
+  .btn-ghost {
+    @apply btn text-white/80 hover:bg-white/[0.06] hover:text-white;
+  }
+
+  .card-glass {
+    @apply rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.02] p-6 backdrop-blur-xl transition-all duration-500;
+    box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.05) inset,
+      0 24px 48px -28px rgba(0, 0, 0, 0.6);
+  }
+  .card-glass:hover {
+    @apply border-white/20;
+    transform: translateY(-4px);
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-white/70 backdrop-blur;
+  }
+
+  .input {
+    @apply w-full rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-white placeholder:text-white/40 backdrop-blur-xl transition focus:border-white/30 focus:bg-white/[0.06] focus:outline-none focus:ring-2 focus:ring-accent-400/30;
+  }
+
+  .label {
+    @apply mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-white/50;
+  }
+
+  .grid-bg {
+    background-image: linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 80%);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .text-pretty {
+    text-wrap: pretty;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
