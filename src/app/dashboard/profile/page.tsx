@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { ProfileForm } from "./ProfileForm";
+import type { Profile } from "@/types/database";
 
 export default async function ProfilePage() {
   const supabase = await createClient();
@@ -7,11 +8,12 @@ export default async function ProfilePage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data: profile } = await supabase
+  const { data } = await supabase
     .from("profiles")
     .select("*")
     .eq("id", user!.id)
     .maybeSingle();
+  const profile = data as Profile | null;
 
   const initial = {
     name:

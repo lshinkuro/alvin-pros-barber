@@ -6,6 +6,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { generateDownloadToken, generatePdfPassword } from "@/lib/pdf/password";
 import { courseDeliveryEmail } from "@/lib/email/templates/course-delivery";
 import { EMAIL_FROM, getResend } from "@/lib/email/resend";
+import type { Profile } from "@/types/database";
+import type { OrderInternalRow, CourseAdminRow } from "@/types/rows";
 
 async function assertAdmin() {
   const supabase = await createClient();
@@ -14,11 +16,13 @@ async function assertAdmin() {
   } = await supabase.auth.getUser();
   if (!user) throw new Error("unauthorized");
 
-  const { data: profile } = await supabase
+  const { data: profileData } = await supabase
     .from("profiles")
     .select("role")
     .eq("id", user.id)
     .maybeSingle();
+  const profile = profileData as Pick<Profile, "role"> | null;
+
   const adminEmails = (process.env.ADMIN_EMAILS || "")
     .split(",")
     .map((e) => e.trim().toLowerCase())
@@ -40,24 +44,37 @@ export async function sendCourseAction(orderId: string) {
   await assertAdmin();
   const admin = createAdminClient();
 
-  const { data: order, error: orderError } = await admin
+  const { data: orderData, error: orderError } = await admin
     .from("orders")
     .select("id, status, user_id, course_id")
     .eq("id", orderId)
     .single();
-  if (orderError || !order) {
+  if (orderError || !orderData) {
     return { ok: false as const, error: "Order not found" };
   }
+  const order = orderData as OrderInternalRow;
   if (order.status === "completed") {
     return { ok: false as const, error: "Order is already completed" };
   }
 
-  const [{ data: course }, { data: profile }] = await Promise.all([
-    admin.from("courses").select("id, title, pdf_path").eq("id", order.course_id).single(),
-    admin.from("profiles").select("id, name, email").eq("id", order.user_id).single(),
+  const [courseRes, profileRes] = await Promise.all([
+    admin
+      .from("courses")
+      .select("id, title, pdf_path")
+      .eq("id", order.course_id)
+      .single(),
+    admin
+      .from("profiles")
+      .select("id, name, email")
+      .eq("id", order.user_id)
+      .single(),
   ]);
+  const course = courseRes.data as CourseAdminRow | null;
+  const buyerProfile = profileRes.data as
+    | Pick<Profile, "id" | "name" | "email">
+    | null;
 
-  if (!course || !profile) {
+  if (!course || !buyerProfile) {
     return { ok: false as const, error: "Course or user record missing" };
   }
 
@@ -84,7 +101,7 @@ export async function sendCourseAction(orderId: string) {
   let emailId: string | null = null;
   try {
     const { subject, html, text } = courseDeliveryEmail({
-      name: profile.name,
+      name: buyerProfile.name,
       course: course.title,
       password,
       downloadUrl,
@@ -92,7 +109,7 @@ export async function sendCourseAction(orderId: string) {
     const resend = getResend();
     const { data: sent, error: emailError } = await resend.emails.send({
       from: EMAIL_FROM,
-      to: profile.email,
+      to: buyerProfile.email,
       subject,
       html,
       text,

@@ -1,15 +1,17 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { formatDate } from "@/lib/utils";
 import { OrderActions } from "./OrderActions";
+import type { OrderSummaryRow } from "@/types/rows";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminOrdersPage() {
   const admin = createAdminClient();
-  const { data: orders } = await admin
+  const { data } = await admin
     .from("orders")
     .select("id, status, created_at, course:courses(title), profile:profiles(name, email)")
     .order("created_at", { ascending: false });
+  const orders = (data ?? []) as unknown as OrderSummaryRow[];
 
   return (
     <div>

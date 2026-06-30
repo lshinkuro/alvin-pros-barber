@@ -1,14 +1,16 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { formatDate, initials } from "@/lib/utils";
+import type { ProfileRow } from "@/types/rows";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminUsersPage() {
   const admin = createAdminClient();
-  const { data: users } = await admin
+  const { data } = await admin
     .from("profiles")
     .select("id, name, email, role, created_at")
     .order("created_at", { ascending: false });
+  const users = (data ?? []) as ProfileRow[];
 
   return (
     <div>

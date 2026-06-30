@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowUpRight, BookOpen, ListOrdered } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import type { OrderSummaryRow } from "@/types/rows";
 
 export default async function DashboardHomePage() {
   const supabase = await createClient();
@@ -8,12 +9,13 @@ export default async function DashboardHomePage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data: orders } = await supabase
+  const { data: ordersData } = await supabase
     .from("orders")
-    .select("id, status, course:courses(id, title, slug)")
+    .select("id, status, created_at, course:courses(id, title, slug)")
     .eq("user_id", user!.id)
     .order("created_at", { ascending: false })
     .limit(4);
+  const orders = (ordersData ?? []) as unknown as OrderSummaryRow[];
 
   const total = orders?.length ?? 0;
   const completed = orders?.filter((o) => o.status === "completed").length ?? 0;

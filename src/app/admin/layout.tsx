@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
+import type { Profile } from "@/types/database";
+
 
 export default async function AdminLayout({
   children,
@@ -13,11 +15,12 @@ export default async function AdminLayout({
   } = await supabase.auth.getUser();
   if (!user) redirect("/login?redirect=/admin");
 
-  const { data: profile } = await supabase
+  const { data } = await supabase
     .from("profiles")
     .select("name, email, role")
     .eq("id", user.id)
     .maybeSingle();
+  const profile = data as Profile | null;
 
   const adminEmails = (process.env.ADMIN_EMAILS || "")
     .split(",")

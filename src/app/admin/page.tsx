@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowUpRight, Clock4, CheckCircle2, BookOpen, Users } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import type { OrderSummaryRow } from "@/types/rows";
 
 export default async function AdminHomePage() {
   const supabase = await createClient();
@@ -19,11 +20,12 @@ export default async function AdminHomePage() {
     { label: "Total users", value: totalUsers.count ?? 0, icon: Users, accent: "from-accent-400 to-pink-500" },
   ];
 
-  const { data: recent } = await supabase
+  const { data: recentData } = await supabase
     .from("orders")
     .select("id, status, created_at, course:courses(title), profile:profiles(name, email)")
     .order("created_at", { ascending: false })
     .limit(5);
+  const recent = (recentData ?? []) as unknown as OrderSummaryRow[];
 
   return (
     <div>

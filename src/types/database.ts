@@ -42,6 +42,7 @@ export interface Database {
         Row: Profile;
         Insert: Omit<Profile, "created_at"> & { created_at?: string };
         Update: Partial<Profile>;
+        Relationships: [];
       };
       courses: {
         Row: Course;
@@ -50,15 +51,21 @@ export interface Database {
           created_at?: string;
         };
         Update: Partial<Course>;
+        Relationships: [];
       };
       orders: {
-        Row: Order;
+        Row: Omit<Order, "course" | "profile">;
         Insert: Omit<Order, "id" | "created_at" | "course" | "profile"> & {
           id?: string;
           created_at?: string;
         };
-        Update: Partial<Order>;
+        Update: Partial<Omit<Order, "course" | "profile">>;
+        Relationships: [];
       };
     };
+    Views: Record<string, never>;
+    Functions: Record<string, never>;
+    Enums: Record<string, never>;
+    CompositeTypes: Record<string, never>;
   };
 }

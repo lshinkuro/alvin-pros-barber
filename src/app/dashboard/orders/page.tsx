@@ -2,6 +2,7 @@ import Link from "next/link";
 import { CheckCircle2, Clock4, XCircle, Mail } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { formatDate } from "@/lib/utils";
+import type { OrderListRow } from "@/types/rows";
 
 export default async function OrdersPage() {
   const supabase = await createClient();
@@ -9,11 +10,12 @@ export default async function OrdersPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data: orders } = await supabase
+  const { data: ordersData } = await supabase
     .from("orders")
     .select("id, status, created_at, delivered_at, course:courses(id, title, slug, price)")
     .eq("user_id", user!.id)
     .order("created_at", { ascending: false });
+  const orders = (ordersData ?? []) as unknown as OrderListRow[];
 
   return (
     <div>
