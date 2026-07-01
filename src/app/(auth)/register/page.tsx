@@ -38,6 +38,8 @@ export default function RegisterPage() {
       return;
     }
     if (data.session) {
+      // Profile row is created by the DB trigger, and defensively backfilled
+      // in the dashboard layout on the very next request.
       router.push("/dashboard");
       router.refresh();
       return;

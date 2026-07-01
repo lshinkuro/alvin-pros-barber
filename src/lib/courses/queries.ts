@@ -33,6 +33,8 @@ export async function getCourseBySlug(slug: string): Promise<Course | null> {
     if (data) return data as Course;
   } catch {
     /* fall through */
+    console.warn(`Failed to fetch course with slug "${slug}" from database, falling back to seed data.`);
+    console.log(`Seed courses: ${JSON.stringify(seedCourses)}`)
   }
   return seedCourses.find((c) => c.slug === slug) ?? null;
 }

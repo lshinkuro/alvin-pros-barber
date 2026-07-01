@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
-import type { Profile } from "@/types/database";
+import { ensureProfile } from "@/lib/auth/ensure-profile";
 
 
 export default async function AdminLayout({
@@ -15,12 +15,9 @@ export default async function AdminLayout({
   } = await supabase.auth.getUser();
   if (!user) redirect("/login?redirect=/admin");
 
-  const { data } = await supabase
-    .from("profiles")
-    .select("name, email, role")
-    .eq("id", user.id)
-    .maybeSingle();
-  const profile = data as Profile | null;
+  // Guarantee a profile row exists (and auto-promotes ADMIN_EMAILS users to
+  // role='admin' in the DB) so downstream RLS + role checks are reliable.
+  const profile = await ensureProfile(user);
 
   const adminEmails = (process.env.ADMIN_EMAILS || "")
     .split(",")

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
@@ -9,6 +10,7 @@ interface ProfileFormProps {
 }
 
 export function ProfileForm({ initial }: ProfileFormProps) {
+  const router = useRouter();
   const [name, setName] = useState(initial.name);
   const [password, setPassword] = useState("");
   const [savingProfile, setSavingProfile] = useState(false);
@@ -42,6 +44,8 @@ export function ProfileForm({ initial }: ProfileFormProps) {
       return;
     }
     setProfileMsg("Profile updated.");
+    // Re-fetch server components (sidebar, header) so the new name shows up.
+    router.refresh();
   }
 
   async function savePassword(e: FormEvent) {

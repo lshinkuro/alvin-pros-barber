@@ -97,6 +97,14 @@ export default async function CourseDetailPage({
                   className="relative aspect-[16/10] w-full overflow-hidden"
                   style={{ background: gradientFor(course.slug) }}
                 >
+                  {course.cover_image && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={course.cover_image}
+                      alt={course.title}
+                      className="absolute inset-0 h-full w-full object-cover"
+                    />
+                  )}
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.35),transparent_55%)]" />
                   <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_55%,rgba(0,0,0,0.45)_100%)]" />
                   <div className="absolute bottom-5 left-5 right-5 font-display text-2xl font-semibold tracking-tight text-white">

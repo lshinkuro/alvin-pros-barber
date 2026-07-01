@@ -1,9 +1,20 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Loader2, Send, X, Eye } from "lucide-react";
+import {
+  Loader2,
+  Send,
+  X,
+  Eye,
+  CheckCircle2,
+  RotateCcw,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { rejectOrderAction, sendCourseAction } from "./actions";
+import {
+  rejectOrderAction,
+  sendCourseAction,
+  setOrderStatusAction,
+} from "./actions";
 
 interface OrderRow {
   id: string;
@@ -21,6 +32,7 @@ export function OrderActions({ order }: { order: OrderRow }) {
 
   const isDone = order.status === "completed";
   const isRejected = order.status === "rejected";
+  const isWaiting = order.status === "waiting";
 
   function handleSend() {
     setError(null);
@@ -40,6 +52,22 @@ export function OrderActions({ order }: { order: OrderRow }) {
       else setMessage("Order rejected.");
     });
   }
+  function handleSetStatus(status: "waiting" | "completed" | "rejected") {
+    setError(null);
+    setMessage(null);
+    startTransition(async () => {
+      const res = await setOrderStatusAction(order.id, status);
+      if (!res.ok) setError(res.error);
+      else
+        setMessage(
+          status === "completed"
+            ? "Marked as paid."
+            : status === "rejected"
+              ? "Order cancelled."
+              : "Reopened to waiting.",
+        );
+    });
+  }
 
   return (
     <>
@@ -51,27 +79,59 @@ export function OrderActions({ order }: { order: OrderRow }) {
         >
           <Eye className="h-3.5 w-3.5" /> View
         </button>
-        <button
-          type="button"
-          disabled={pending || isDone || isRejected}
-          onClick={handleSend}
-          className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-br from-accent-400 via-pink-500 to-purple-500 px-3 py-1.5 text-xs font-medium text-white shadow-soft transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {pending ? (
-            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-          ) : (
-            <Send className="h-3.5 w-3.5" />
-          )}
-          Send Course
-        </button>
-        <button
-          type="button"
-          disabled={pending || isDone || isRejected}
-          onClick={handleReject}
-          className="inline-flex items-center gap-1.5 rounded-full border border-rose-300/30 bg-rose-300/10 px-3 py-1.5 text-xs font-medium text-rose-200 transition hover:bg-rose-300/15 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          <X className="h-3.5 w-3.5" /> Reject
-        </button>
+
+        {/* Primary: send course email (only while waiting). */}
+        {isWaiting && (
+          <button
+            type="button"
+            disabled={pending}
+            onClick={handleSend}
+            className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-br from-accent-400 via-pink-500 to-purple-500 px-3 py-1.5 text-xs font-medium text-white shadow-soft transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {pending ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <Send className="h-3.5 w-3.5" />
+            )}
+            Send Course
+          </button>
+        )}
+
+        {/* Mark paid without sending email — for orders paid offline. */}
+        {!isDone && (
+          <button
+            type="button"
+            disabled={pending}
+            onClick={() => handleSetStatus("completed")}
+            className="inline-flex items-center gap-1.5 rounded-full border border-emerald-300/30 bg-emerald-300/10 px-3 py-1.5 text-xs font-medium text-emerald-200 transition hover:bg-emerald-300/15 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <CheckCircle2 className="h-3.5 w-3.5" /> Mark Paid
+          </button>
+        )}
+
+        {/* Cancel = set to rejected. */}
+        {!isRejected && (
+          <button
+            type="button"
+            disabled={pending}
+            onClick={isWaiting ? handleReject : () => handleSetStatus("rejected")}
+            className="inline-flex items-center gap-1.5 rounded-full border border-rose-300/30 bg-rose-300/10 px-3 py-1.5 text-xs font-medium text-rose-200 transition hover:bg-rose-300/15 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <X className="h-3.5 w-3.5" /> Cancel
+          </button>
+        )}
+
+        {/* Reopen a completed/rejected order back to waiting. */}
+        {!isWaiting && (
+          <button
+            type="button"
+            disabled={pending}
+            onClick={() => handleSetStatus("waiting")}
+            className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs text-white/85 transition hover:bg-white/[0.08] disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <RotateCcw className="h-3.5 w-3.5" /> Reopen
+          </button>
+        )}
       </div>
       {(error || message) && (
         <div

@@ -50,6 +50,14 @@ export default async function CoursesPage() {
                   className="relative aspect-[16/10] w-full overflow-hidden"
                   style={{ background: gradientFor(c.slug) }}
                 >
+                  {c.cover_image && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={c.cover_image}
+                      alt={c.title}
+                      className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+                    />
+                  )}
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.35),transparent_55%)]" />
                   <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_55%,rgba(0,0,0,0.45)_100%)]" />
                   <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between">

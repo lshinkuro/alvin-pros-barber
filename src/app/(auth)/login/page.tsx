@@ -39,6 +39,8 @@ function LoginForm() {
       setLoading(false);
       return;
     }
+    // Profiles row is auto-created by the DB trigger, and defensively backfilled
+    // in the dashboard/admin layouts (see lib/auth/ensure-profile.ts).
     router.push(redirect);
     router.refresh();
   }

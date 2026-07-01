@@ -2,6 +2,8 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getActiveProvider } from "@/lib/payments";
 import { seedCourses } from "@/lib/courses/seed";
+import { ensureProfile } from "@/lib/auth/ensure-profile";
+import type { Course } from "@/types/database";
 
 /**
  * Create (or reuse) a "waiting" order for the authenticated user and return
@@ -30,26 +32,19 @@ export async function POST(request: NextRequest) {
   }
 
   // Resolve course (DB first, seed fallback)
-  let course = null as Awaited<ReturnType<typeof loadCourse>> | null;
-  course = await loadCourse(supabase, body);
+  const course = await loadCourse(supabase, body);
   if (!course) {
     return NextResponse.json({ error: "course_not_found" }, { status: 404 });
   }
 
-  // Load / upsert profile
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  const userProfile = profile ?? {
-    id: user.id,
-    name: (user.user_metadata?.name as string) || user.email || "Student",
-    email: user.email || "",
-    role: "user" as const,
-    created_at: new Date().toISOString(),
-  };
+  // Ensure a profile row exists so the orders FK never fails.
+  const userProfile = await ensureProfile(user);
+  if (!userProfile) {
+    return NextResponse.json(
+      { error: "profile_create_failed" },
+      { status: 500 },
+    );
+  }
 
   // Reuse a still-waiting order for the same course, otherwise create one
   let orderId: string | undefined;
@@ -63,7 +58,7 @@ export async function POST(request: NextRequest) {
       .maybeSingle();
 
     if (existing) {
-      orderId = existing.id;
+      orderId = (existing as { id: string }).id;
     } else {
       const { data: created, error: createError } = await supabase
         .from("orders")
@@ -80,7 +75,7 @@ export async function POST(request: NextRequest) {
           { status: 500 },
         );
       }
-      orderId = created.id;
+      orderId = (created as { id: string }).id;
     }
   }
 
@@ -97,13 +92,13 @@ export async function POST(request: NextRequest) {
 async function loadCourse(
   supabase: Awaited<ReturnType<typeof createClient>>,
   body: { course_slug?: string; course_id?: string },
-) {
+): Promise<Course | null> {
   try {
-    const query = supabase.from("courses").select("*").limit(1);
+    const base = () => supabase.from("courses").select("*").limit(1);
     const { data } = body.course_id
-      ? await query.eq("id", body.course_id).maybeSingle()
-      : await query.eq("slug", body.course_slug!).maybeSingle();
-    if (data) return data;
+      ? await base().eq("id", body.course_id).maybeSingle()
+      : await base().eq("slug", body.course_slug!).maybeSingle();
+    if (data) return data as Course;
   } catch {
     /* fall through */
   }

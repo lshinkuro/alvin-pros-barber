@@ -157,3 +157,27 @@ export async function rejectOrderAction(orderId: string) {
   revalidatePath("/dashboard/orders");
   return { ok: true as const };
 }
+
+/**
+ * Manually set an order's status without triggering the email flow.
+ * Useful for correcting mistakes ("mark as paid" without re-sending the PDF,
+ * "cancel" an order, or reopening one back to waiting).
+ */
+export async function setOrderStatusAction(
+  orderId: string,
+  status: "waiting" | "completed" | "rejected",
+) {
+  await assertAdmin();
+  const admin = createAdminClient();
+  const patch: Record<string, unknown> = { status };
+  if (status === "completed") {
+    // Stamp delivery time so /dashboard/orders reflects a paid order even
+    // when the admin skips the "Send Course" email flow.
+    patch.delivered_at = new Date().toISOString();
+  }
+  const { error } = await admin.from("orders").update(patch).eq("id", orderId);
+  if (error) return { ok: false as const, error: error.message };
+  revalidatePath("/admin/orders");
+  revalidatePath("/dashboard/orders");
+  return { ok: true as const };
+}

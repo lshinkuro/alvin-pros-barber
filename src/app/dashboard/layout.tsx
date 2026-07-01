@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
-import type { Profile } from "@/types/database";
+import { ensureProfile } from "@/lib/auth/ensure-profile";
 
 export default async function DashboardLayout({
   children,
@@ -14,12 +14,8 @@ export default async function DashboardLayout({
   } = await supabase.auth.getUser();
   if (!user) redirect("/login?redirect=/dashboard");
 
-  const { data } = await supabase
-    .from("profiles")
-    .select("name, email")
-    .eq("id", user.id)
-    .maybeSingle();
-  const profile = data as Pick<Profile, "name" | "email"> | null;
+  // Backfill profiles.* for legacy users whose signup predates the trigger.
+  const profile = await ensureProfile(user);
 
   const display = {
     name:
