@@ -31,7 +31,7 @@ export function courseDeliveryEmail({
           <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;">
             <tr>
               <td style="padding:0 0 32px 0;">
-                <div style="font-size:14px;letter-spacing:0.28em;text-transform:uppercase;color:#9b9ba6;font-weight:600;">Barber Academy</div>
+                <div style="font-size:14px;letter-spacing:0.28em;text-transform:uppercase;color:#9b9ba6;font-weight:600;">AlfinSquare Academy</div>
               </td>
             </tr>
             <tr>
@@ -65,7 +65,7 @@ export function courseDeliveryEmail({
             </tr>
             <tr>
               <td style="padding:24px 0 0 0;text-align:center;font-size:12px;color:#6f6f7a;">
-                © ${new Date().getFullYear()} Barber Academy. All rights reserved.
+                © ${new Date().getFullYear()} AlfinSquare Academy. All rights reserved.
               </td>
             </tr>
           </table>
@@ -90,7 +90,7 @@ export function courseDeliveryEmail({
     "",
     "If you have questions, please contact us.",
     "",
-    "— Barber Academy",
+    "— AlfinSquare Academy",
   ].join("\n");
 
   return { subject, html, text };

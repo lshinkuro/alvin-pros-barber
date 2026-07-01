@@ -11,4 +11,4 @@ export function getResend() {
 }
 
 export const EMAIL_FROM =
-  process.env.EMAIL_FROM || "Barber Academy <onboarding@resend.dev>";
+  process.env.EMAIL_FROM || "AlfinSquare Academy <onboarding@resend.dev>";

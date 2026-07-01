@@ -27,7 +27,7 @@ export default function AuthLayout({
             <Scissors className="h-4 w-4" strokeWidth={2.2} />
           </span>
           <span className="font-display text-base font-semibold tracking-tight">
-            Barber Academy
+            AlfinSquare Academy
           </span>
         </Link>
 
@@ -68,7 +68,7 @@ export default function AuthLayout({
         </div>
 
         <div className="text-xs text-white/40">
-          © {new Date().getFullYear()} Barber Academy
+          © {new Date().getFullYear()} AlfinSquare Academy
         </div>
       </section>
 

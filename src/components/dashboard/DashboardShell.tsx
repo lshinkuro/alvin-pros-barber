@@ -56,7 +56,7 @@ export function DashboardShell({
           </span>
           <div>
             <div className="font-display text-sm font-semibold tracking-tight">
-              Barber Academy
+              AlfinSquare Academy
             </div>
             <div className="text-[10px] uppercase tracking-[0.22em] text-white/45">
               {variant === "admin" ? "Admin" : "Student"}
@@ -138,7 +138,7 @@ export function DashboardShell({
             <Scissors className="h-3.5 w-3.5" strokeWidth={2.2} />
           </span>
           <span className="font-display text-sm font-semibold">
-            Barber Academy
+            AlfinSquare Academy
           </span>
         </Link>
         <form action={signOutAction}>

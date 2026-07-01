@@ -48,7 +48,7 @@ export function NavbarClient({ isAuthenticated, dashboardHref }: NavbarClientPro
             <Scissors className="h-4 w-4" strokeWidth={2.2} />
           </span>
           <span className="font-display text-[15px] font-semibold tracking-tight">
-            Alvin Barber Academy
+            AlfinSquare Academy
           </span>
         </Link>
 

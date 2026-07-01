@@ -12,7 +12,7 @@ export function Footer() {
                 <Scissors className="h-4 w-4" strokeWidth={2.2} />
               </span>
               <span className="font-display text-base font-semibold tracking-tight">
-                Barber Academy
+                AlfinSquare Academy
               </span>
             </Link>
             <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/55">
@@ -59,7 +59,7 @@ export function Footer() {
         </div>
 
         <div className="mt-16 flex flex-col items-start justify-between gap-3 border-t border-white/10 py-8 text-xs text-white/45 sm:flex-row sm:items-center">
-          <span>© {new Date().getFullYear()} Barber Academy. All rights reserved.</span>
+          <span>© {new Date().getFullYear()} AlfinSquare Academy. All rights reserved.</span>
           <span className="flex items-center gap-5">
             <Link href="#" className="hover:text-white/80">
               Privacy

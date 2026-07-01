@@ -49,7 +49,7 @@ export function WhyChooseUs() {
       <div className="container-page">
         <Reveal>
           <div className="mx-auto max-w-2xl text-center">
-            <span className="chip">Why Barber Academy</span>
+            <span className="chip">Why AlfinSquare Academy</span>
             <h2 className="mt-5 font-display text-4xl font-semibold tracking-tight sm:text-5xl">
               <span className="gradient-text">Crafted for ambitious</span>{" "}
               <span className="text-white/90">barbers.</span>

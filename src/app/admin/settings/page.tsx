@@ -12,7 +12,7 @@ export default function AdminSettingsPage() {
       icon: Mail,
       title: "Email (Resend)",
       body: "Course delivery emails are sent via Resend. Configure your API key and verified sender domain.",
-      env: "RESEND_API_KEY=…\nEMAIL_FROM=Barber Academy <courses@yourdomain.com>",
+      env: "RESEND_API_KEY=…\nEMAIL_FROM=AlfinSquare Academy <courses@yourdomain.com>",
     },
     {
       icon: Database,

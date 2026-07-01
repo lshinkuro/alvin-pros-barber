@@ -15,14 +15,14 @@ const display = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Barber Academy — Become a Professional Barber From Anywhere",
+  title: "AlfinSquare Academy — Become a Professional Barber From Anywhere",
   description:
     "Premium barber training delivered as beautifully crafted PDF courses. Master fades, scissor work, beard styling, color, and the business of barbering.",
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
   ),
   openGraph: {
-    title: "Barber Academy",
+    title: "AlfinSquare Academy",
     description:
       "Premium barber training in PDF format — built by a professional barber.",
     type: "website",

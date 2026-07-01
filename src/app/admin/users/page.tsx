@@ -18,7 +18,7 @@ export default async function AdminUsersPage() {
         Users
       </h1>
       <p className="mt-2 text-white/60">
-        Everyone who has signed up for Barber Academy.
+        Everyone who has signed up for AlfinSquare Academy.
       </p>
 
       <div className="mt-8 overflow-hidden rounded-3xl border border-white/10 bg-white/[0.02] backdrop-blur-xl">
